@@ -45,6 +45,12 @@ namespace ConsoleApp1
             {
                 _connection.Insert(OrderOperationLog);
             }
+
+
+
+
+
+
         }
     }
 
