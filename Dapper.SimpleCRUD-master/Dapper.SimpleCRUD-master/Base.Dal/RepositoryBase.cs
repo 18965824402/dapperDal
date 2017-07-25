@@ -5,23 +5,27 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Base.Model;
+using System.Data.Common;
+
 namespace Base.Dal
 {
     public class RepositoryBase<TEntity, TKey> where TEntity : Entity, new()
     {
-        private IDbConnection conn;
-        private IDbTransaction transaction;
+        private DbConnection _connection;
+        //private IDbConnection conn;
+        //private IDbTransaction transaction;
 
-        public RepositoryBase(IDbConnection _conn, IDbTransaction _transaction)
-        {
+        //public RepositoryBase(IDbConnection _conn, IDbTransaction _transaction)
+        //{
 
          
 
 
-            conn = _conn;
-            transaction = _transaction;
+        //    conn = _conn;
+        //    transaction = _transaction;
 
-        }
+        //}
 
         /// <summary>
         /// <para>By default queries the table matching the class name</para>
@@ -37,9 +41,24 @@ namespace Base.Dal
         /// <param name="transaction"></param>
         /// <param name="commandTimeout"></param>
         /// <returns>Returns a single entity by a single id from table T.</returns>
-        public virtual T Get<T>(object id)
+        public virtual T Get<T>(object id, IDbConnection conn=null, IDbTransaction transaction = null)
         {
-            return conn.Get<T>( id, transaction);
+            T result;
+            if(conn==null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.Get<T>(id, transaction);
+                }
+            }
+            else
+            {
+                result = conn.Get<T>(id, transaction);
+            }
+           
+            return result;
+
+
         }
 
         /// <summary>
@@ -55,9 +74,24 @@ namespace Base.Dal
         /// <param name="transaction"></param>
         /// <param name="commandTimeout"></param>
         /// <returns>Gets a list of entities with optional exact match where conditions</returns>
-        public virtual IEnumerable<T> GetList<T>(object whereConditions)
+        public virtual IEnumerable<T> GetList<T>(object whereConditions, IDbConnection conn = null, IDbTransaction transaction = null)
         {
-            return conn.GetList<T>(whereConditions, transaction);
+            IEnumerable<T> result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.GetList<T>(whereConditions, transaction);
+                }
+            }
+            else
+            {
+                result = conn.GetList<T>(whereConditions, transaction);
+            }
+
+            return result;
+
+         
         }
 
         ///// <summary>
@@ -75,9 +109,27 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>Gets a list of entities with optional SQL where conditions</returns>
-        public virtual IEnumerable<T> GetList<T>(string conditions, object parameters = null)
+        public virtual IEnumerable<T> GetList<T>(string conditions, object parameters = null, IDbConnection conn = null, IDbTransaction transaction = null)
         {
-            return conn.GetList<T>(conditions, parameters, transaction);
+
+
+            IEnumerable<T> result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.GetList<T>(conditions, parameters, transaction);
+                }
+            }
+            else
+            {
+                result = conn.GetList<T>(conditions, parameters, transaction);
+            }
+
+            return result;
+
+
+          
         }
 
         /////// <summary>
@@ -112,11 +164,28 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>Gets a paged list of entities with optional exact match where conditions</returns>
-        public virtual IEnumerable<T> GetListPaged<T>( int pageNumber, int rowsPerPage, string conditions, string orderby, object parameters = null)
+        public virtual IEnumerable<T> GetListPaged<T>( int pageNumber, int rowsPerPage, string conditions, string orderby, object parameters = null, IDbConnection conn = null, IDbTransaction transaction = null)
         {
 
-            return conn.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderby, parameters, transaction);
-        }
+
+            IEnumerable<T> result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderby, parameters, transaction);
+                }
+            }
+            else
+            {
+                result = conn.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderby, parameters, transaction);
+            }
+
+            return result;
+
+
+
+           }
 
         ///// <summary>
         ///// <para>Inserts a row into the database</para>
@@ -132,10 +201,26 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The ID (primary key) of the newly inserted record if it is identity using the int? type, otherwise null</returns>
-        public virtual int? Insert<TEntity>(TEntity entityToInsert)
+        public virtual int? Insert<TEntity>(TEntity entityToInsert, IDbConnection conn = null, IDbTransaction transaction = null)
         {
-            return conn.Insert<TEntity>(entityToInsert, transaction);
-        }
+
+            int? result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.Insert<TEntity>(entityToInsert, transaction);
+                }
+            }
+            else
+            {
+                result = conn.Insert<TEntity>(entityToInsert, transaction);
+            }
+
+            return result;
+
+
+            }
 
         ///// <summary>
         ///// <para>Inserts a row into the database, using ONLY the properties defined by TEntity</para>
@@ -151,10 +236,27 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The ID (primary key) of the newly inserted record if it is identity using the defined type, otherwise null</returns>
-        public virtual TKey Insert<TKey, TEntity>(TEntity entityToInsert)
+        public virtual TKey Insert<TKey, TEntity>(TEntity entityToInsert, IDbConnection conn = null, IDbTransaction transaction = null)
         {
-            return conn.Insert<TKey, TEntity>(entityToInsert, transaction);
-        }
+
+            TKey result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.Insert<TKey, TEntity>(entityToInsert, transaction);
+                }
+            }
+            else
+            {
+                result = conn.Insert<TKey, TEntity>(entityToInsert, transaction);
+            }
+
+            return result;
+
+
+
+          }
 
         ///// <summary>
         ///// <para>Updates a record or records in the database with only the properties of TEntity</para>
@@ -170,9 +272,26 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The number of effected records</returns>
-        public virtual int Update<TEntity>(TEntity entityToUpdate)
+        public virtual int Update<TEntity>(TEntity entityToUpdate, IDbConnection conn = null, IDbTransaction transaction = null)
         {
-            return conn.Update<TEntity>(entityToUpdate, transaction);
+
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.Update< TEntity>(entityToUpdate, transaction);
+                }
+            }
+            else
+            {
+                result = conn.Update< TEntity>(entityToUpdate, transaction);
+            }
+
+            return result;
+
+
+          
         }
 
         ///// <summary>
@@ -188,10 +307,27 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The number of records effected</returns>
-        public virtual int Delete<T>(T entityToDelete)
+        public virtual int Delete<T>(T entityToDelete, IDbConnection conn = null, IDbTransaction transaction = null)
         {
 
-            return conn.Delete<T>(entityToDelete, transaction);
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.Delete<T>(entityToDelete, transaction);
+                }
+            }
+            else
+            {
+                result = conn.Delete<T>(entityToDelete, transaction);
+            }
+
+            return result;
+
+
+
+          
         }
 
         ///// <summary>
@@ -208,10 +344,27 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The number of records effected</returns>
-        public virtual int Delete<T>(object id)
+        public virtual int Delete<T>(object id, IDbConnection conn = null, IDbTransaction transaction = null)
         {
 
-            return conn.Delete<T>(id, transaction);
+
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.Delete<T>(id, transaction);
+                }
+            }
+            else
+            {
+                result = conn.Delete<T>(id, transaction);
+            }
+
+            return result;
+
+
+          
         }
 
         ///// <summary>
@@ -229,11 +382,27 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The number of records effected</returns>
-        public virtual int DeleteList<T>(object whereConditions)
+        public virtual int DeleteList<T>(object whereConditions, IDbConnection conn = null, IDbTransaction transaction = null)
         {
 
 
-            return conn.DeleteList<T>(whereConditions, transaction);
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.DeleteList<T>(whereConditions, transaction);
+                }
+            }
+            else
+            {
+                result = conn.DeleteList<T>(whereConditions, transaction);
+            }
+
+            return result;
+
+
+          
         }
 
         ///// <summary>
@@ -252,11 +421,27 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>The number of records effected</returns>
-        public virtual int DeleteList<T>(string conditions, object parameters = null)
+        public virtual int DeleteList<T>(string conditions, object parameters = null, IDbConnection conn = null, IDbTransaction transaction = null)
         {
 
-            return conn.DeleteList<T>(conditions, parameters, transaction);
-        }
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.DeleteList<T>(conditions, parameters, transaction);
+                }
+            }
+            else
+            {
+                result = conn.DeleteList<T>(conditions, parameters, transaction);
+            }
+
+            return result;
+
+
+
+           }
 
         ///// <summary>
         ///// <para>By default queries the table matching the class name</para>
@@ -273,11 +458,28 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>Returns a count of records.</returns>
-        public virtual int RecordCount<T>(string conditions = "", object parameters = null)
+        public virtual int RecordCount<T>(string conditions = "", object parameters = null, IDbConnection conn = null, IDbTransaction transaction = null)
         {
 
-            return conn.RecordCount<T>(conditions, parameters, transaction);
-        }
+
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.RecordCount<T>(conditions, parameters, transaction);
+                }
+            }
+            else
+            {
+                result = conn.RecordCount<T>(conditions, parameters, transaction);
+            }
+
+            return result;
+
+
+
+           }
 
         ///// <summary>
         ///// <para>By default queries the table matching the class name</para>
@@ -292,10 +494,28 @@ namespace Base.Dal
         ///// <param name="transaction"></param>
         ///// <param name="commandTimeout"></param>
         ///// <returns>Returns a count of records.</returns>
-        public virtual int RecordCount<T>(object whereConditions)
+        public virtual int RecordCount<T>(object whereConditions, IDbConnection conn = null, IDbTransaction transaction = null)
         {
-            return conn.RecordCount<T>(whereConditions, transaction);
-        }
+
+
+            int result;
+            if (conn == null)
+            {
+                using (_connection = Utilities.GetOpenConnection())
+                {
+                    result = _connection.RecordCount<T>(whereConditions, transaction);
+                }
+            }
+            else
+            {
+                result = conn.RecordCount<T>(whereConditions, transaction);
+            }
+
+            return result;
+
+
+
+            }
 
 
 

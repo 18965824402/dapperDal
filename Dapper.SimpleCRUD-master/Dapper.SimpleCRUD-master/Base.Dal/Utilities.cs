@@ -13,13 +13,13 @@ namespace Base.Dal
     {
         public static SqlConnection GetOpenConnection(WRStrategy Strategy = WRStrategy.Write)
         {
-            ConnectionStringSettings Connection = ConfigurationManager.ConnectionStrings["testdb"];
+            ConnectionStringSettings Connection = ConfigurationManager.ConnectionStrings["Xiaoyujia"];
             bool flag = ZConfig.GetConfigBool("SingleStrategy");
             if (flag)
             {
                 if (Strategy == WRStrategy.Read)
                 {
-                    Connection = ConfigurationManager.ConnectionStrings["readtestdb"];
+                    Connection = ConfigurationManager.ConnectionStrings["readXiaoyujia"];
                 }
             }
             string ConnectionString = Connection.ConnectionString;
