@@ -17,7 +17,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            for (int i = 0; i < 20000; i++)
+            for (int i = 0; i < 40000; i++)
             {
                 Thread thread = new Thread(new System.Threading.ParameterizedThreadStart(ss));
 
