@@ -14,6 +14,10 @@ namespace Base.Dal
 
         public RepositoryBase(IDbConnection _conn, IDbTransaction _transaction)
         {
+
+         
+
+
             conn = _conn;
             transaction = _transaction;
 

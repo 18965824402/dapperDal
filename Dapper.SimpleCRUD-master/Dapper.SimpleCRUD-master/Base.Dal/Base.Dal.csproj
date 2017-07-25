@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Base.Dal</RootNamespace>
     <AssemblyName>Base.Dal</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -31,7 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HSCP.Core">
+      <HintPath>..\HSCP.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="HSCP.Utils">
+      <HintPath>..\HSCP.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,6 +51,8 @@
     <Compile Include="Entity.cs" />
     <Compile Include="RepositoryBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="WRStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dapper.SimpleCRUD NET45\Dapper.SimpleCRUD NET45.csproj">
