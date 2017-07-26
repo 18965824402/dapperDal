@@ -17,15 +17,15 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            for (int i = 0; i < 40000; i++)
-            {
-                Thread thread = new Thread(new System.Threading.ParameterizedThreadStart(ss));
+            //for (int i = 0; i < 40000; i++)
+            //{
+            //    Thread thread = new Thread(new System.Threading.ParameterizedThreadStart(ss));
 
-                thread.Start(i);
-                Console.WriteLine(i);
-            }
+            //    thread.Start(i);
+            //    Console.WriteLine(i);
+            //}
 
-
+            ss(1);
 
             Console.ReadKey();
 
@@ -33,7 +33,6 @@ namespace ConsoleApp1
       
         static void ss(object arg)
         {
-
             OrderOperationLog OrderOperationLog = new OrderOperationLog();
             OrderOperationLog.BillNo = "1470638701252";
             OrderOperationLog.Message = "订单状态 “执行中”→“开始服务”";
@@ -45,8 +44,13 @@ namespace ConsoleApp1
 
 
             OrderOperationLogRep rep = new OrderOperationLogRep();
-            int? r=  rep.Insert<OrderOperationLog>(OrderOperationLog);
-            Console.WriteLine(r);
+            using (DistributedTransaction tran = new DistributedTransaction())
+            {
+              
+                int? r = rep.Insert<OrderOperationLog>(OrderOperationLog);
+                Console.WriteLine(r);
+                //tran.Dispose();
+            }
             //using (var _connection = Utilities.GetOpenConnection())
             //{
             //    _connection.Insert(OrderOperationLog);
